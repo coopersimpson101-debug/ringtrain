@@ -1,0 +1,271 @@
+{
+ "machine": {
+  "os": "Windows 10",
+  "python": "3.12.10",
+  "cpu": "AMD Ryzen 5 3600 6-Core Processor",
+  "logical_cpus": 12,
+  "date": "2026-11-26",
+  "topology": "single host, worker PROCESSES over loopback TCP (not a cluster)",
+  "host_load": "total CPU busy 100% just before this run (other jobs on the host)"
+ },
+ "runs": [
+  {
+   "world": 2,
+   "rank": 0,
+   "results": [
+    {
+     "algo": "ring",
+     "elements": 1024,
+     "bytes": 4096,
+     "seconds": 0.0014960479999717791,
+     "algbw_GBps": 0.002737880068070854,
+     "busbw_GBps": 0.002737880068070854
+    },
+    {
+     "algo": "naive",
+     "elements": 1024,
+     "bytes": 4096,
+     "seconds": 0.0001723879999917699,
+     "algbw_GBps": 0.0237603545501749,
+     "busbw_GBps": 0.0237603545501749
+    },
+    {
+     "algo": "ring",
+     "elements": 16384,
+     "bytes": 65536,
+     "seconds": 0.0003045420000125887,
+     "algbw_GBps": 0.21519527683305084,
+     "busbw_GBps": 0.21519527683305084
+    },
+    {
+     "algo": "naive",
+     "elements": 16384,
+     "bytes": 65536,
+     "seconds": 0.00024292800000694115,
+     "algbw_GBps": 0.26977540669715905,
+     "busbw_GBps": 0.26977540669715905
+    },
+    {
+     "algo": "ring",
+     "elements": 262144,
+     "bytes": 1048576,
+     "seconds": 0.0025063119999686025,
+     "algbw_GBps": 0.41837408910508184,
+     "busbw_GBps": 0.41837408910508184
+    },
+    {
+     "algo": "naive",
+     "elements": 262144,
+     "bytes": 1048576,
+     "seconds": 0.0033870400000159864,
+     "algbw_GBps": 0.3095847701813533,
+     "busbw_GBps": 0.3095847701813533
+    },
+    {
+     "algo": "ring",
+     "elements": 1048576,
+     "bytes": 4194304,
+     "seconds": 0.014406140425482127,
+     "algbw_GBps": 0.2911469606794167,
+     "busbw_GBps": 0.2911469606794167
+    },
+    {
+     "algo": "naive",
+     "elements": 1048576,
+     "bytes": 4194304,
+     "seconds": 0.06989487446813616,
+     "algbw_GBps": 0.06000874930982398,
+     "busbw_GBps": 0.06000874930982398
+    },
+    {
+     "algo": "ring",
+     "elements": 4194304,
+     "bytes": 16777216,
+     "seconds": 0.06441109090916473,
+     "algbw_GBps": 0.26047091833392394,
+     "busbw_GBps": 0.26047091833392394
+    },
+    {
+     "algo": "naive",
+     "elements": 4194304,
+     "bytes": 16777216,
+     "seconds": 0.14016134545454406,
+     "algbw_GBps": 0.11969930757721674,
+     "busbw_GBps": 0.11969930757721674
+    }
+   ]
+  },
+  {
+   "world": 3,
+   "rank": 0,
+   "results": [
+    {
+     "algo": "ring",
+     "elements": 1024,
+     "bytes": 4096,
+     "seconds": 0.0005780599999707192,
+     "algbw_GBps": 0.007085769643648544,
+     "busbw_GBps": 0.009447692858198058
+    },
+    {
+     "algo": "naive",
+     "elements": 1024,
+     "bytes": 4096,
+     "seconds": 0.0002180159999988973,
+     "algbw_GBps": 0.018787611918486335,
+     "busbw_GBps": 0.025050149224648446
+    },
+    {
+     "algo": "ring",
+     "elements": 16384,
+     "bytes": 65536,
+     "seconds": 0.0005936179999844172,
+     "algbw_GBps": 0.11040096493320681,
+     "busbw_GBps": 0.14720128657760906
+    },
+    {
+     "algo": "naive",
+     "elements": 16384,
+     "bytes": 65536,
+     "seconds": 0.0007779139999911422,
+     "algbw_GBps": 0.08424581637654835,
+     "busbw_GBps": 0.11232775516873113
+    },
+    {
+     "algo": "ring",
+     "elements": 262144,
+     "bytes": 1048576,
+     "seconds": 0.003386975999965216,
+     "algbw_GBps": 0.30959062007252747,
+     "busbw_GBps": 0.4127874934300366
+    },
+    {
+     "algo": "naive",
+     "elements": 262144,
+     "bytes": 1048576,
+     "seconds": 0.005475828000053298,
+     "algbw_GBps": 0.19149177074038737,
+     "busbw_GBps": 0.25532236098718314
+    },
+    {
+     "algo": "ring",
+     "elements": 1048576,
+     "bytes": 4194304,
+     "seconds": 0.022390676595758587,
+     "algbw_GBps": 0.18732368278654507,
+     "busbw_GBps": 0.24976491038206008
+    },
+    {
+     "algo": "naive",
+     "elements": 1048576,
+     "bytes": 4194304,
+     "seconds": 0.08215406595743534,
+     "algbw_GBps": 0.0510541255763665,
+     "busbw_GBps": 0.06807216743515533
+    },
+    {
+     "algo": "ring",
+     "elements": 4194304,
+     "bytes": 16777216,
+     "seconds": 0.08076538181822715,
+     "algbw_GBps": 0.20772781137541424,
+     "busbw_GBps": 0.276970415167219
+    },
+    {
+     "algo": "naive",
+     "elements": 4194304,
+     "bytes": 16777216,
+     "seconds": 0.18701445454545054,
+     "algbw_GBps": 0.08971079824165461,
+     "busbw_GBps": 0.11961439765553947
+    }
+   ]
+  },
+  {
+   "world": 4,
+   "rank": 0,
+   "results": [
+    {
+     "algo": "ring",
+     "elements": 1024,
+     "bytes": 4096,
+     "seconds": 0.0008862519999820506,
+     "algbw_GBps": 0.00462171030370928,
+     "busbw_GBps": 0.00693256545556392
+    },
+    {
+     "algo": "naive",
+     "elements": 1024,
+     "bytes": 4096,
+     "seconds": 0.0003361099999892758,
+     "algbw_GBps": 0.012186486567286573,
+     "busbw_GBps": 0.01827972985092986
+    },
+    {
+     "algo": "ring",
+     "elements": 16384,
+     "bytes": 65536,
+     "seconds": 0.0019430019999708747,
+     "algbw_GBps": 0.033729249893197415,
+     "busbw_GBps": 0.05059387483979612
+    },
+    {
+     "algo": "naive",
+     "elements": 16384,
+     "bytes": 65536,
+     "seconds": 0.0007932080000318819,
+     "algbw_GBps": 0.0826214561595015,
+     "busbw_GBps": 0.12393218423925226
+    },
+    {
+     "algo": "ring",
+     "elements": 262144,
+     "bytes": 1048576,
+     "seconds": 0.0045271540000248935,
+     "algbw_GBps": 0.23161924688098398,
+     "busbw_GBps": 0.34742887032147596
+    },
+    {
+     "algo": "naive",
+     "elements": 262144,
+     "bytes": 1048576,
+     "seconds": 0.006272851999965496,
+     "algbw_GBps": 0.16716096601765318,
+     "busbw_GBps": 0.25074144902647977
+    },
+    {
+     "algo": "ring",
+     "elements": 1048576,
+     "bytes": 4194304,
+     "seconds": 0.022335040425535593,
+     "algbw_GBps": 0.1877903025957662,
+     "busbw_GBps": 0.2816854538936493
+    },
+    {
+     "algo": "naive",
+     "elements": 1048576,
+     "bytes": 4194304,
+     "seconds": 0.08034681702129286,
+     "algbw_GBps": 0.05220249109418311,
+     "busbw_GBps": 0.07830373664127466
+    },
+    {
+     "algo": "ring",
+     "elements": 4194304,
+     "bytes": 16777216,
+     "seconds": 0.10899701818198082,
+     "algbw_GBps": 0.15392362359848094,
+     "busbw_GBps": 0.2308854353977214
+    },
+    {
+     "algo": "naive",
+     "elements": 4194304,
+     "bytes": 16777216,
+     "seconds": 0.1876983909093145,
+     "algbw_GBps": 0.08938390957280941,
+     "busbw_GBps": 0.13407586435921412
+    }
+   ]
+  }
+ ]
+}

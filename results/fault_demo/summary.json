@@ -1,0 +1,45 @@
+{
+ "injected": [
+  {
+   "t": 1795662393.169132,
+   "event": "kill_worker",
+   "id": "w2",
+   "seen_step": 191
+  },
+  {
+   "t": 1795662416.611321,
+   "event": "kill_store_leader",
+   "id": "server",
+   "seen_step": 300
+  },
+  {
+   "t": 1795662430.8592024,
+   "event": "restart_worker",
+   "id": "w2",
+   "seen_step": 400
+  }
+ ],
+ "final_step": 600,
+ "steps": 600,
+ "ckpt_every": 25,
+ "workers": 4,
+ "store": "raftstore",
+ "t_start": 1795662067.5328512,
+ "adapter_args": {
+  "hidden": 768,
+  "depth": 3,
+  "global_batch": 512,
+  "lr": 0.05
+ },
+ "machine": {
+  "os": "Windows 10",
+  "python": "3.12.10",
+  "cpu": "AMD Ryzen 5 3600 6-Core Processor",
+  "logical_cpus": 12,
+  "date": "2026-11-26",
+  "topology": "single host, worker PROCESSES over loopback TCP (not a cluster)",
+  "host_load": "total CPU busy 100% just before this run (other jobs on the host)"
+ },
+ "date": "2026-11-26",
+ "host": "single host, loopback TCP (not a cluster)"
+}

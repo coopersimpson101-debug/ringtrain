@@ -1,0 +1,21 @@
+[Unit]
+Description=ringtrain elastic training worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=/etc/ringtrain.env
+ExecStart=/opt/ringtrain-venv/bin/python -m ringtrain worker \
+  --coordinator ${RINGTRAIN_COORDINATOR} --id ${RINGTRAIN_ID} \
+  --host 0.0.0.0 --port 29500 --advertise ${RINGTRAIN_ADVERTISE} \
+  --store ${RINGTRAIN_STORE} --run ${RINGTRAIN_RUN} --adapter ${RINGTRAIN_ADAPTER} \
+  --steps ${RINGTRAIN_STEPS} --ckpt-every ${RINGTRAIN_CKPT_EVERY} \
+  --log /var/log/ringtrain/worker.jsonl
+# a crashed or power-cycled worker comes back and re-joins the run on its own
+Restart=always
+RestartSec=5
+User=ringtrain
+LogsDirectory=ringtrain
+
+[Install]
+WantedBy=multi-user.target

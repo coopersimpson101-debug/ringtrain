@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: "ringtrain: distributed training over hand-written TCP collectives with fault-tolerant checkpoints"
+authors:
+  - name: "the ringtrain authors"
+type: software
+version: 0.1.0
+date-released: 2026-11-26
+license: MIT
+repository-code: "https://github.com/coopersimpson101-debug/ringtrain"
+keywords:
+  - distributed-training
+  - ring-allreduce
+  - data-parallelism
+  - pipeline-parallelism
+  - gradient-compression
+  - fault-tolerance

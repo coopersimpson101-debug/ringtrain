@@ -1,0 +1,13 @@
+[   8.26s] raftstore: 3 local processes (nas, pi5, server), leader 'server'
+[  26.38s] reference run: 4 workers, no faults, 600 steps
+[ 215.72s] reference finished at step 600
+[ 218.02s] coordinator at 127.0.0.1:61995; starting 4 workers
+[ 325.64s] KILLED worker w2 (TerminateProcess/SIGKILL) at global step ~191
+[ 349.08s] KILLED raftstore leader 'server' at step ~300; 2 of 3 store nodes remain
+[ 363.33s] restarted w2 as a fresh process at step ~400; it will re-join
+[ 426.30s] run finished at step 600
+[ 426.32s]   coordinator: form {'gen': 1, 'world': 4, 'ids': ['w2', 'w3', 'w1', 'w0']}
+[ 426.32s]   coordinator: abort {'gen': 1, 'reason': 'w2 disconnected', 'failure': True, 'survivors': ['w3', 'w1', 'w0']}
+[ 426.32s]   coordinator: form {'gen': 2, 'world': 3, 'ids': ['w3', 'w1', 'w0']}
+[ 426.32s]   coordinator: abort {'gen': 2, 'reason': 'w3 requested re-form (scale-up)', 'failure': False, 'survivors': ['w3', 'w1', 'w0']}
+[ 426.32s]   coordinator: form {'gen': 3, 'world': 4, 'ids': ['w3', 'w1', 'w0', 'w2']}

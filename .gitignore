@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# run artefacts (results/ JSON and logs ARE committed; checkpoints are not)
+*.pt
+*.ckpt
+ringtrain-*/
+runs/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,242 @@
+{
+ "machine": {
+  "os": "Windows 10",
+  "python": "3.12.10",
+  "cpu": "AMD Ryzen 5 3600 6-Core Processor",
+  "logical_cpus": 12,
+  "date": "2026-11-26",
+  "topology": "single host, worker PROCESSES over loopback TCP (not a cluster)",
+  "host_load": "total CPU busy 100% just before this run (other jobs on the host)"
+ },
+ "adapter": "mlp",
+ "adapter_args": {
+  "hidden": 1024,
+  "depth": 3,
+  "num_samples": 32768
+ },
+ "steps": 30,
+ "reps": 2,
+ "torch_threads_per_worker": 1,
+ "weak": [
+  {
+   "world": 1,
+   "rank": 0,
+   "global_batch": 128,
+   "steps": 30,
+   "wall_s": 2.260599800001728,
+   "samples_per_s": 1698.6642217685169,
+   "compute_s_per_step": 0.0667663799999597,
+   "comm_wait_s_per_step": 0.0023601133333916854,
+   "params": 2143242,
+   "bytes_sent_per_step": 0.0,
+   "last_loss": 1.4148876667022705,
+   "torch_threads": 1,
+   "samples_per_s_median": 1690.273408013506,
+   "samples_per_s_all": [
+    1698.6642217685169,
+    1681.8825942584951
+   ]
+  },
+  {
+   "world": 2,
+   "rank": 0,
+   "global_batch": 256,
+   "steps": 30,
+   "wall_s": 6.710718800000905,
+   "samples_per_s": 1144.4377612721553,
+   "compute_s_per_step": 0.16367742666667862,
+   "comm_wait_s_per_step": 0.0713378799999191,
+   "params": 2143242,
+   "bytes_sent_per_step": 8573307.233333332,
+   "last_loss": 1.3875726461410522,
+   "torch_threads": 1,
+   "samples_per_s_median": 1131.4860867975037,
+   "samples_per_s_all": [
+    1144.4377612721553,
+    1118.5344123228522
+   ]
+  },
+  {
+   "world": 3,
+   "rank": 0,
+   "global_batch": 384,
+   "steps": 30,
+   "wall_s": 3.6652260000009846,
+   "samples_per_s": 3143.0531159598086,
+   "compute_s_per_step": 0.07665850333354077,
+   "comm_wait_s_per_step": 0.04173405333343302,
+   "params": 2143242,
+   "bytes_sent_per_step": 11431113.933333334,
+   "last_loss": 1.4924981594085693,
+   "torch_threads": 1,
+   "samples_per_s_median": 2528.0953298524078,
+   "samples_per_s_all": [
+    3143.0531159598086,
+    1913.1375437450067
+   ]
+  },
+  {
+   "world": 4,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 5.185440999999628,
+   "samples_per_s": 2962.1395750141796,
+   "compute_s_per_step": 0.10757237666663665,
+   "comm_wait_s_per_step": 0.06989729333345167,
+   "params": 2143242,
+   "bytes_sent_per_step": 12860179.533333333,
+   "last_loss": 1.340794563293457,
+   "torch_threads": 1,
+   "samples_per_s_median": 2833.5737134227184,
+   "samples_per_s_all": [
+    2962.1395750141796,
+    2705.0078518312575
+   ]
+  }
+ ],
+ "strong": [
+  {
+   "world": 1,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 6.728856399999131,
+   "samples_per_s": 2282.705869603932,
+   "compute_s_per_step": 0.21588815333313202,
+   "comm_wait_s_per_step": 0.002729823333235496,
+   "params": 2143242,
+   "bytes_sent_per_step": 0.0,
+   "last_loss": 1.3148499727249146,
+   "torch_threads": 1,
+   "samples_per_s_median": 2273.6312452131933,
+   "samples_per_s_all": [
+    2264.5566208224545,
+    2282.705869603932
+   ]
+  },
+  {
+   "world": 2,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 4.366774699999951,
+   "samples_per_s": 3517.4702280839388,
+   "compute_s_per_step": 0.11193332333338428,
+   "comm_wait_s_per_step": 0.0258429700001822,
+   "params": 2143242,
+   "bytes_sent_per_step": 8573307.233333332,
+   "last_loss": 1.3180540800094604,
+   "torch_threads": 1,
+   "samples_per_s_median": 3209.7067265759965,
+   "samples_per_s_all": [
+    3517.4702280839388,
+    2901.9432250680543
+   ]
+  },
+  {
+   "world": 3,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 4.896903700000621,
+   "samples_per_s": 3136.6759366736273,
+   "compute_s_per_step": 0.10921328000016123,
+   "comm_wait_s_per_step": 0.058199736666756506,
+   "params": 2143242,
+   "bytes_sent_per_step": 11431113.933333334,
+   "last_loss": 1.3134050871196545,
+   "torch_threads": 1,
+   "samples_per_s_median": 3047.8892404714184,
+   "samples_per_s_all": [
+    3136.6759366736273,
+    2959.1025442692094
+   ]
+  },
+  {
+   "world": 4,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 4.999445999999807,
+   "samples_per_s": 3072.340415318136,
+   "compute_s_per_step": 0.09577829666662487,
+   "comm_wait_s_per_step": 0.0657987933333061,
+   "params": 2143242,
+   "bytes_sent_per_step": 12860179.533333333,
+   "last_loss": 1.340794563293457,
+   "torch_threads": 1,
+   "samples_per_s_median": 2842.5982674881425,
+   "samples_per_s_all": [
+    3072.340415318136,
+    2612.8561196581486
+   ]
+  }
+ ],
+ "variants": [
+  {
+   "world": 4,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 5.8317158999998355,
+   "samples_per_s": 2633.8731624427096,
+   "compute_s_per_step": 0.09256740333257767,
+   "comm_wait_s_per_step": 0.09867290666661574,
+   "params": 2143242,
+   "bytes_sent_per_step": 12860179.533333333,
+   "last_loss": 1.340794563293457,
+   "torch_threads": 1,
+   "variant": "no-overlap",
+   "samples_per_s_median": 3170.181539544879,
+   "samples_per_s_all": [
+    2633.8731624427096,
+    3706.489916647048
+   ]
+  },
+  {
+   "world": 4,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 5.745242900000449,
+   "samples_per_s": 2673.5162059029394,
+   "compute_s_per_step": 0.0857486333328173,
+   "comm_wait_s_per_step": 0.0989267366664232,
+   "params": 2143242,
+   "bytes_sent_per_step": 514591.5333333333,
+   "last_loss": 1.5502184629440308,
+   "torch_threads": 1,
+   "variant": "topk:0.01",
+   "samples_per_s_median": 2227.4373808946743,
+   "samples_per_s_all": [
+    2673.5162059029394,
+    1781.3585558864095
+   ]
+  },
+  {
+   "world": 4,
+   "rank": 0,
+   "global_batch": 512,
+   "steps": 30,
+   "wall_s": 7.390462499999558,
+   "samples_per_s": 2078.354365508372,
+   "compute_s_per_step": 0.12057907000028839,
+   "comm_wait_s_per_step": 0.12729625000029046,
+   "params": 2143242,
+   "bytes_sent_per_step": 168259.53333333333,
+   "last_loss": 1.3624693155288696,
+   "torch_threads": 1,
+   "variant": "powersgd:4",
+   "samples_per_s_median": 2141.4678317098687,
+   "samples_per_s_all": [
+    2078.354365508372,
+    2204.5812979113653
+   ]
+  }
+ ],
+ "seconds": 1136.353405714035,
+ "crashed_attempts": [
+  "N=1 weak : worker exited with code 3221227274"
+ ]
+}

@@ -1,0 +1,16 @@
+[Unit]
+Description=ringtrain rendezvous coordinator
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/opt/ringtrain-venv/bin/python -m ringtrain coordinator --host 0.0.0.0 --port 29400 \
+  --min-workers 1 --max-workers 4 --initial-workers 4 --initial-wait 300 \
+  --events /var/log/ringtrain/coordinator.jsonl
+Restart=always
+RestartSec=2
+User=ringtrain
+LogsDirectory=ringtrain
+
+[Install]
+WantedBy=multi-user.target

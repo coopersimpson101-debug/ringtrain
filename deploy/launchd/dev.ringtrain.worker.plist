@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- M1 worker: cp to ~/Library/LaunchAgents/ and `launchctl load` it. Edit the venv path. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>dev.ringtrain.worker</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/ringtrain-venv/bin/python</string>
+    <string>-m</string><string>ringtrain</string><string>worker</string>
+    <string>--coordinator</string><string>10.0.0.12:29400</string>
+    <string>--id</string><string>m1</string>
+    <string>--host</string><string>0.0.0.0</string>
+    <string>--port</string><string>29500</string>
+    <string>--advertise</string><string>10.0.0.13</string>
+    <string>--store</string><string>raftstore:http://10.0.0.10:8080,http://10.0.0.11:8080,http://10.0.0.12:8080</string>
+    <string>--run</string><string>mlp-scaling</string>
+    <string>--adapter</string><string>mlp</string>
+    <string>--steps</string><string>2000</string>
+    <string>--log</string><string>/tmp/ringtrain-worker.jsonl</string>
+  </array>
+  <key>KeepAlive</key><true/>
+  <key>RunAtLoad</key><true/>
+</dict>
+</plist>

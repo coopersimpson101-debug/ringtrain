@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ringtrain"
+version = "0.1.0"
+description = "Distributed training for a home cluster: hand-written ring all-reduce over TCP, DDP and pipeline parallelism, gradient compression, and fault-tolerant checkpoints in raftstore"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "the ringtrain authors" }]
+dependencies = ["numpy>=1.24", "torch>=2.2"]
+keywords = ["distributed-training", "ring-allreduce", "data-parallel", "pipeline-parallel", "gpipe", "1f1b",
+            "powersgd", "gradient-compression", "fault-tolerance", "elastic-training", "home-lab"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: System :: Distributed Computing",
+]
+
+[project.urls]
+Homepage = "https://github.com/coopersimpson101-debug/ringtrain"
+Repository = "https://github.com/coopersimpson101-debug/ringtrain"
+Issues = "https://github.com/coopersimpson101-debug/ringtrain/issues"
+Documentation = "https://github.com/coopersimpson101-debug/ringtrain/tree/main/docs"
+Changelog = "https://github.com/coopersimpson101-debug/ringtrain/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+# raftstore is only needed to *run* a checkpoint cluster (and for the tests that start one);
+# ringtrain talks to it over its HTTP API with the standard library.
+raftstore = ["raftstore @ git+https://github.com/coopersimpson101-debug/raftstore"]
+dog2real = ["dog2real @ git+https://github.com/coopersimpson101-debug/dog2real", "mujoco>=3.1", "pyyaml>=6.0", "gymnasium>=0.29"]
+plots = ["matplotlib>=3.7"]
+test = ["pytest>=8"]
+
+[project.scripts]
+ringtrain = "ringtrain.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["ringtrain*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "slow: multi-process tests (spawn real OS processes on localhost)",
+  "cluster: starts a real 3-process raftstore cluster",
+]

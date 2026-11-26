@@ -1,0 +1,6 @@
+{"t": 1795662114.9588294, "event": "join", "id": "w2", "addr": "127.0.0.1:61444", "active_gen": null}
+{"t": 1795662123.0626962, "event": "join", "id": "w0", "addr": "127.0.0.1:61469", "active_gen": null}
+{"t": 1795662135.8651502, "event": "join", "id": "w3", "addr": "127.0.0.1:61505", "active_gen": null}
+{"t": 1795662142.4671044, "event": "join", "id": "w1", "addr": "127.0.0.1:61530", "active_gen": null}
+{"t": 1795662142.5311828, "event": "form", "gen": 1, "world": 4, "ids": ["w2", "w0", "w3", "w1"]}
+{"t": 1795662279.292167, "event": "finished", "gen": 1}

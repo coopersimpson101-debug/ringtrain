@@ -1,0 +1,11 @@
+{"t": 1795662307.2255585, "event": "join", "id": "w2", "addr": "127.0.0.1:62060", "active_gen": null}
+{"t": 1795662326.9606416, "event": "join", "id": "w3", "addr": "127.0.0.1:62120", "active_gen": null}
+{"t": 1795662328.3233082, "event": "join", "id": "w1", "addr": "127.0.0.1:62126", "active_gen": null}
+{"t": 1795662329.5163627, "event": "join", "id": "w0", "addr": "127.0.0.1:62131", "active_gen": null}
+{"t": 1795662329.5634058, "event": "form", "gen": 1, "world": 4, "ids": ["w2", "w3", "w1", "w0"]}
+{"t": 1795662393.020677, "event": "abort", "gen": 1, "reason": "w2 disconnected", "failure": true, "survivors": ["w3", "w1", "w0"]}
+{"t": 1795662394.0436864, "event": "form", "gen": 2, "world": 3, "ids": ["w3", "w1", "w0"]}
+{"t": 1795662460.273298, "event": "join", "id": "w2", "addr": "127.0.0.1:62593", "active_gen": 2}
+{"t": 1795662464.003218, "event": "abort", "gen": 2, "reason": "w3 requested re-form (scale-up)", "failure": false, "survivors": ["w3", "w1", "w0"]}
+{"t": 1795662464.062918, "event": "form", "gen": 3, "world": 4, "ids": ["w3", "w1", "w0", "w2"]}
+{"t": 1795662489.9276853, "event": "finished", "gen": 3}

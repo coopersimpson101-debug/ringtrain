@@ -1,0 +1,36 @@
+name: Bug report
+description: Something behaves incorrectly (wrong gradients, a hang, a run that does not recover)
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! For security issues, please use private reporting instead (see SECURITY.md).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Commands (coordinator + workers), adapter, world size, checkpoint store.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: The worker `--log` JSONL and the coordinator `--events` file around the problem.
+      render: text
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "e.g. Ubuntu 24.04 + Raspberry Pi OS, Python 3.12, torch 2.5, 3 machines on gigabit LAN"
+    validations:
+      required: true

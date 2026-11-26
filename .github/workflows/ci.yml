@@ -1,0 +1,60 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: unit (${{ matrix.os }}, py${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12"]
+        include:
+          - os: macos-latest
+            python: "3.12"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install (CPU torch)
+        run: |
+          python -m pip install -q --upgrade pip
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -e ".[test,plots]" pyflakes
+      - name: Lint
+        run: python -m pyflakes ringtrain tests scripts
+      - name: Collectives, transport, DDP, pipeline, compression, checkpoints (threads over loopback TCP)
+        run: python -m pytest -q -m "not slow and not cluster"
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install ringtrain + raftstore + dog2real
+        run: |
+          python -m pip install -q --upgrade pip
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q -e ".[test,plots,raftstore,dog2real]"
+          git clone -q --depth 1 https://github.com/coopersimpson101-debug/dog2real "$RUNNER_TEMP/dog2real"
+      - name: Multi-process tests, a real 3-node raftstore cluster, kill -9 a worker, dog2real PPO
+        env:
+          DOG2REAL_ROOT: ${{ runner.temp }}/dog2real
+        run: python -m pytest -q -s -m "slow or cluster" tests/ && python -m pytest -q tests/test_dog2real.py
+      - name: Fault-injection demo (4 workers + 3 raftstore nodes, short)
+        run: |
+          python scripts/fault_demo.py --no-reference --steps 300 --kill-step 80 --store-kill-step 140 \
+            --rejoin-step 170 --adapter-args '{"hidden": 256, "depth": 3, "global_batch": 256}' \
+            --out "$RUNNER_TEMP/fault_demo"
+      - name: Figures regenerate from the committed results
+        run: python scripts/make_figures.py && python scripts/make_banner.py && python scripts/check_links.py
