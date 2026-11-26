@@ -7,6 +7,8 @@ import numpy as np
 import torch
 from torch import nn
 
+from ..seeding import seeded
+
 
 def make_mlp(d_in: int, hidden: int, depth: int, d_out: int) -> nn.Sequential:
     layers: list[nn.Module] = []
@@ -36,8 +38,8 @@ class TeacherMLPAdapter:
             self.y = teacher(self.X).argmax(1)
 
     def build_model(self, seed: int = 0) -> nn.Module:
-        torch.manual_seed(seed)
-        return make_mlp(self.d_in, self.hidden, self.depth, self.classes)
+        with seeded(seed):  # thread-safe, same parameters as torch.manual_seed(seed) + build
+            return make_mlp(self.d_in, self.hidden, self.depth, self.classes)
 
     def build_optimizer(self, model):
         return torch.optim.SGD(model.parameters(), lr=self.lr, momentum=self.momentum)

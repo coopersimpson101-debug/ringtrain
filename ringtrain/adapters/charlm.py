@@ -14,6 +14,8 @@ import numpy as np
 import torch
 from torch import nn
 
+from ..seeding import seeded
+
 
 def load_corpus() -> bytes:
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,8 +91,8 @@ class CharLMAdapter:
         self.num_samples = len(self.data) - ctx - 1
 
     def build_model(self, seed: int = 0):
-        torch.manual_seed(seed)
-        return make_charlm(256, self.d, self.heads, self.layers, self.ctx)
+        with seeded(seed):
+            return make_charlm(256, self.d, self.heads, self.layers, self.ctx)
 
     def build_optimizer(self, model):
         return torch.optim.AdamW(model.parameters(), lr=self.lr, weight_decay=0.0)

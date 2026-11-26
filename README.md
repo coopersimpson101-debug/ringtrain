@@ -281,15 +281,16 @@ processes × 16 environments.
 
 ### Test suite
 
-`python -m pytest` (with `DOG2REAL_ROOT` set) on the same host, 2026-11-26: **137 tests**. The full run
-took 16 min on the loaded host; 136 passed and one (2-rank DD-PPO with PowerSGD) hit the 120 s
-thread-harness timeout, which was raised to 900 s, after which `tests/test_dog2real.py` passed 4/4.
+`python -m pytest` (with `DOG2REAL_ROOT` set) on the same host, 2026-11-26: **138 tests**, all passing
+(fast suite: 134 in 27 s; the multi-process elastic tests were run 3 times in a row). The elastic
+tests hold training with `--pause-file` while a worker is killed and until its replacement has
+registered, so they do not depend on how long a process takes to start.
 
 | file | what it checks |
 |---|---|
 | `test_collectives.py` | ring all-reduce = naive sum exactly (N = 1-5, float32/int64, sizes 0-65,537); max/min; reduce-scatter ownership; segmenting; pipelined broadcast; barrier ordering; all-gather; two channels in flight; 3 real processes |
 | `test_transport.py` | frame validation; rendezvous: rank order kept after a failure, scale-up flag, FINISHED; failure detection by connection drop (< 2 s) and by heartbeat timeout; abort wakes blocked receivers |
-| `test_ddp.py` | DDP = single-process SGD for N = 1-4, ranks bitwise identical, buckets launched during backward, overlap on/off identical, unused parameters |
+| `test_ddp.py` | DDP = single-process SGD for N = 1-4, ranks bitwise identical, buckets launched during backward, overlap on/off identical, unused parameters, thread-safe seeded model construction |
 | `test_pipeline.py` | schedules complete and causal; 1F1B in-flight bound; balanced split; GPipe/1F1B = single process (MLP, 2-4 stages); 1F1B bit-exact on a transformer |
 | `test_compression.py` | top-k at 100 % exact; error-feedback mass conservation; PowerSGD full rank exact; low rank compresses; all three converge |
 | `test_checkpoint.py` | weights-only round trip incl. optimiser and RNG; pruning; async save isolation; corruption detected; **real 3-node raftstore cluster with its leader killed** |

@@ -8,6 +8,7 @@ from ringtrain.adapters.mlp import TeacherMLPAdapter
 from ringtrain.data import global_batch_indices, shard
 from ringtrain.ddp import DistributedDataParallel, broadcast_module
 from ringtrain.launch import run_threads
+from ringtrain.seeding import seeded
 
 torch.set_num_threads(1)
 AD = TeacherMLPAdapter(num_samples=2048, hidden=48, depth=2, global_batch=64, lr=0.1)
@@ -88,8 +89,8 @@ def test_unused_parameters_count_as_zero():
             return self.used(x)
 
     def fn(pg):
-        torch.manual_seed(0)
-        m = Two()
+        with seeded(0):
+            m = Two()
         ddp = DistributedDataParallel(m, pg, bucket_mb=1e-6)
         m(torch.ones(2, 4) * (pg.rank + 1)).sum().backward()
         ddp.finish()
@@ -102,8 +103,8 @@ def test_unused_parameters_count_as_zero():
 
 def test_broadcast_module_makes_ranks_identical():
     def fn(pg):
-        torch.manual_seed(pg.rank)
-        m = nn.Sequential(nn.Linear(3, 5), nn.BatchNorm1d(5))
+        with seeded(pg.rank):
+            m = nn.Sequential(nn.Linear(3, 5), nn.BatchNorm1d(5))
         m[1].running_mean.fill_(pg.rank)
         broadcast_module(pg, m, root=0)
         return [t.clone() for t in list(m.parameters()) + list(m.buffers())]
@@ -111,3 +112,24 @@ def test_broadcast_module_makes_ranks_identical():
     for ts in out[1:]:
         for a, b in zip(ts, out[0]):
             assert torch.equal(a, b)
+
+
+def test_concurrent_model_construction_is_deterministic():
+    """Regression: ranks building models in parallel threads used to race on torch's global RNG
+    (manual_seed in one thread between another thread's parameter inits), which corrupted rank 0's
+    initialisation on Linux/macOS CI.  ``seeded`` must give the single-threaded parameters."""
+    import threading
+    torch.manual_seed(0)
+    from ringtrain.adapters.mlp import make_mlp
+    ref = [p.clone() for p in make_mlp(AD.d_in, AD.hidden, AD.depth, AD.classes).parameters()]
+    for _ in range(50):
+        out = {}
+
+        def build(seed):
+            out[seed] = [p.clone() for p in AD.build_model(seed).parameters()]
+        ths = [threading.Thread(target=build, args=(s,)) for s in (0, 101, 102, 103)]
+        for t in ths:
+            t.start()
+        for t in ths:
+            t.join()
+        assert all(torch.equal(a, b) for a, b in zip(out[0], ref))

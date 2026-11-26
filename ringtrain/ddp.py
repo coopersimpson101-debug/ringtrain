@@ -173,3 +173,9 @@ class DistributedDataParallel(nn.Module):
         for h in self._hooks:
             h.remove()
         self._q.put(None)
+        if self._thread is not threading.current_thread():
+            # never leave the comm thread running into the next generation or into shutdown
+            self._thread.join(timeout=1.0)
+            if self._thread.is_alive():  # stuck in a recv of a broken generation: wake it
+                self.pg.t.abort("DDP closing")
+                self._thread.join(timeout=30)

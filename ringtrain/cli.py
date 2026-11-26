@@ -24,9 +24,12 @@ def _cmd_coordinator(a) -> int:
 
 
 def _cmd_worker(a) -> int:
+    import faulthandler
+
     import torch
 
     from .adapters import make_adapter
+    faulthandler.enable()  # a native crash prints the Python stacks of every thread to stderr
     from .checkpoint import CheckpointStore, make_backend
     from .elastic import ElasticTrainer
     if a.threads:
@@ -35,10 +38,18 @@ def _cmd_worker(a) -> int:
     store = CheckpointStore(make_backend(a.store), a.run, keep=a.keep)
     wid = a.id or f"{socket.gethostname()}-{os.getpid()}"
     tr = ElasticTrainer(adapter, store, a.coordinator, wid, a.steps, a.ckpt_every, a.seed, a.compression,
-                        a.bucket_mb, a.log, a.host, a.port, a.advertise, a.hb_timeout, a.min_step_time)
+                        a.bucket_mb, a.log, a.host, a.port, a.advertise, a.hb_timeout, a.min_step_time,
+                        a.pause_file)
     summary = tr.run()
     print(json.dumps({"worker": wid, **summary}), flush=True)
-    return 0
+    # Everything is persisted (logs are appended per event, checkpoints are acknowledged) and all
+    # sockets are closed, so skip interpreter finalisation.  On Linux CI one worker died with
+    # SIGABRT ("terminate called without an active exception"): libstdc++'s message for a
+    # std::thread destroyed while joinable, which is what static destructors do if they run while
+    # native threads are still alive at exit.  os._exit runs no destructors.  faulthandler (above)
+    # will show the Python stacks if a native crash ever happens mid-run instead.
+    sys.stderr.flush()
+    os._exit(0)
 
 
 def _cmd_info(a) -> int:
@@ -84,6 +95,8 @@ def main(argv=None) -> int:
     w.add_argument("--advertise", help="address peers should dial (default: --host)")
     w.add_argument("--hb-timeout", type=float, default=8.0)
     w.add_argument("--log", help="append per-step JSONL events here")
+    w.add_argument("--pause-file", help="while this file exists, wait at the next step boundary "
+                   "(if it holds an integer N: only from step N on)")
     w.add_argument("--min-step-time", type=float, default=0.0,
                    help="pad every step to at least this many seconds (emulates slower machines in demos/tests)")
     w.set_defaults(fn=_cmd_worker)

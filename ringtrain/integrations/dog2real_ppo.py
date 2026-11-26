@@ -27,6 +27,7 @@ from torch import nn
 from ..collectives import ProcessGroup
 from ..compression import make_reducer
 from ..ddp import DistributedDataParallel, broadcast_module
+from ..seeding import seeded
 
 try:  # dog2real is an optional dependency
     from dog2real.rl.networks import ActorCritic
@@ -67,11 +68,11 @@ class DistributedPPOTrainer:
         self.steps_per_env = int(ppo_cfg.pop("steps_per_env", 24))
         self.asymmetric = bool(pcfg.get("asymmetric_critic", True))
         critic_dim = env.num_privileged_obs if self.asymmetric else env.num_obs
-        torch.manual_seed(seed)  # same init everywhere; broadcast below makes it certain
-        self.policy = ActorCritic(env.num_obs, critic_dim, env.num_actions,
-                                  pcfg.get("actor_hidden", [256, 128, 64]),
-                                  pcfg.get("critic_hidden", [256, 128, 64]),
-                                  pcfg.get("activation", "elu"), pcfg.get("init_noise_std", 1.0))
+        with seeded(seed):  # same init everywhere (thread-safe); broadcast below makes it certain
+            self.policy = ActorCritic(env.num_obs, critic_dim, env.num_actions,
+                                      pcfg.get("actor_hidden", [256, 128, 64]),
+                                      pcfg.get("critic_hidden", [256, 128, 64]),
+                                      pcfg.get("activation", "elu"), pcfg.get("init_noise_std", 1.0))
         self.obs_norm = EmpiricalNormalization(env.num_obs)
         self.critic_norm = EmpiricalNormalization(critic_dim)
         self.alg = PPO(self.policy, seed=seed + 7919 * pg.rank, **ppo_cfg)

@@ -63,7 +63,8 @@ class ElasticTrainer:
     def __init__(self, adapter, store: CheckpointStore, coord_addr: str, worker_id: str, total_steps: int,
                  ckpt_every: int = 25, seed: int = 0, compression: str | None = None, bucket_mb: float = 1.0,
                  log_path: str | None = None, host: str = "127.0.0.1", port: int = 0,
-                 advertise: str | None = None, hb_timeout: float = 8.0, min_step_s: float = 0.0):
+                 advertise: str | None = None, hb_timeout: float = 8.0, min_step_s: float = 0.0,
+                 pause_file: str | None = None):
         self.adapter, self.store = adapter, store
         self.coord_addr, self.id = coord_addr, worker_id
         self.total_steps, self.ckpt_every, self.seed = total_steps, ckpt_every, seed
@@ -72,6 +73,7 @@ class ElasticTrainer:
         self.host, self.port, self.advertise = host, port, advertise
         self.hb_timeout = hb_timeout
         self.min_step_s = min_step_s  # pad steps (emulate slower hardware in demos/tests)
+        self.pause_file = pause_file
         self._t: Transport | None = None
         self.summary = {"generations": 0, "failures": 0, "steps_run": 0, "restores": []}
 
@@ -167,6 +169,7 @@ class ElasticTrainer:
         B = ad.global_batch
         try:
             while step < self.total_steps:
+                self._maybe_pause(pg, step, gen)
                 t0 = time.perf_counter()
                 local = shard(global_batch_indices(ad.num_samples, B, step, self.seed), pg.rank, pg.world)
                 opt.zero_grad(set_to_none=True)
@@ -207,6 +210,28 @@ class ElasticTrainer:
             return "done"
         finally:
             ddp.close()
+
+    def _maybe_pause(self, pg: ProcessGroup, step: int, gen: int) -> None:
+        """Operator control: while ``pause_file`` exists, wait at this step boundary (if the file
+        holds an integer N, only once ``step >= N``).  Heartbeats keep flowing, and a peer failure
+        or a coordinator ABORT still ends the generation, so a paused group can shrink and grow.
+        The tests use it to make kill / re-join scenarios independent of process start-up time."""
+        if not self.pause_file:
+            return
+        logged = False
+        while os.path.exists(self.pause_file):
+            try:
+                with open(self.pause_file, encoding="utf-8") as f:
+                    txt = f.read().strip()
+                if txt and step < int(txt):
+                    return
+            except (OSError, ValueError):
+                pass
+            if not logged:
+                self.log("paused", gen=gen, step=step, rank=pg.rank, world=pg.world)
+                logged = True
+            pg.t.check()  # raises on a dead peer or an ABORT
+            time.sleep(0.05)
 
     def _state(self, model, opt, step: int) -> dict:
         return {"model": {k: v.detach().clone() for k, v in model.state_dict().items()},

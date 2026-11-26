@@ -47,14 +47,30 @@ def read(path):
     return out
 
 
-def max_step(logdir):
-    return max([r["step"] for p in glob.glob(os.path.join(logdir, "*.jsonl")) for r in read(p)
-                if r["event"] == "step"] or [0])
+def _wait(cond, what, timeout=300):
+    end = time.time() + timeout
+    while not cond():
+        assert time.time() < end, f"timed out waiting for {what}"
+        time.sleep(0.05)
 
 
-def run_scenario(tmp_path, store_spec, kill_at=40, rejoin_at=42):
+def _paused(logdir, wid, gen_pred):
+    return any(r["event"] == "paused" and gen_pred(r["gen"]) for r in read(os.path.join(logdir, f"{wid}.jsonl")))
+
+
+def run_scenario(tmp_path, store_spec, kill_at=40):
+    """Deterministic kill / re-join, independent of how long processes take to start:
+
+    1. all 3 workers train and then hold at step ``kill_at`` (``--pause-file`` containing the step);
+    2. w1 is killed while they hold; the survivors re-form as generation 2 and hold again;
+    3. a fresh w1 is started; only once the coordinator has registered it is the pause lifted,
+       so the survivors cannot finish the run before it arrives.
+    """
     logdir = str(tmp_path / "logs")
     os.makedirs(logdir)
+    pause = str(tmp_path / "pause")
+    with open(pause, "w", encoding="utf-8") as f:
+        f.write(str(kill_at))
     coord = Coordinator(min_workers=1, max_workers=3, settle_s=0.5, initial_workers=3).start()
     env = dict(os.environ, OMP_NUM_THREADS="1", PYTHONPATH=ROOT + os.pathsep + os.environ.get("PYTHONPATH", ""))
 
@@ -62,30 +78,34 @@ def run_scenario(tmp_path, store_spec, kill_at=40, rejoin_at=42):
         return subprocess.Popen(
             [sys.executable, "-m", "ringtrain", "worker", "--coordinator", coord.addr, "--id", wid,
              "--adapter", "mlp", "--adapter-args", json.dumps(ADAPTER_ARGS), "--store", store_spec,
-             "--run", "t", "--steps", str(STEPS), "--ckpt-every", "10", "--threads", "1", "--min-step-time", "0.15",
-             "--log", os.path.join(logdir, f"{wid}.jsonl")], env=env, stdout=subprocess.DEVNULL)
+             "--run", "t", "--steps", str(STEPS), "--ckpt-every", "10", "--threads", "1",
+             "--pause-file", pause, "--log", os.path.join(logdir, f"{wid}.jsonl")],
+            env=env, stdout=subprocess.DEVNULL)
+
+    def forms():
+        return [e for e in list(coord.history) if e["event"] == "form"]
     procs = {w: start(w) for w in ("w0", "w1", "w2")}
-    killed = rejoined = False
-    end = time.time() + 600
     try:
-        while any(p.poll() is None for p in procs.values()):
-            assert time.time() < end, "scenario timed out"
-            s = max_step(logdir)
-            if not killed and s >= kill_at:
-                procs["w1"].kill()  # SIGKILL on POSIX, TerminateProcess on Windows
-                procs["w1"].wait(10)
-                killed = True
-                procs.pop("w1")
-            elif killed and not rejoined and s >= rejoin_at:
-                procs["w1b"] = start("w1")  # a fresh process with the same id
-                rejoined = True
-            time.sleep(0.05)
+        _wait(lambda: all(_paused(logdir, w, lambda g: g == 1) for w in ("w0", "w1", "w2")),
+              f"all workers holding at step {kill_at}")
+        procs["w1"].kill()  # SIGKILL on POSIX, TerminateProcess on Windows
+        procs["w1"].wait(10)
+        procs.pop("w1")
+        _wait(lambda: any(e["world"] == 2 for e in forms()), "the survivors to re-form as 2")
+        gen2 = next(e["gen"] for e in forms() if e["world"] == 2)
+        _wait(lambda: all(_paused(logdir, w, lambda g: g == gen2) for w in ("w0", "w2")),
+              "the survivors to restore and hold")
+        t_restart = time.time()
+        procs["w1b"] = start("w1")  # a fresh process with the same id
+        _wait(lambda: any(e["event"] == "join" and e["id"] == "w1" and e["t"] >= t_restart
+                          for e in list(coord.history)), "the restarted worker to register")
+        os.remove(pause)  # let training go on; the waiting newcomer triggers a graceful re-form
+        _wait(lambda: all(p.poll() is not None for p in procs.values()), "the run to finish", timeout=600)
     finally:
         for p in procs.values():
             if p.poll() is None:
                 p.kill()
         coord.stop()
-    assert killed
     return logdir, coord.history, {w: p.returncode for w, p in procs.items()}
 
 
